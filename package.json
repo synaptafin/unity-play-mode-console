@@ -1,0 +1,16 @@
+{
+  "name": "com.synaptafin.play-mode-console",
+  "version": "0.0.1",
+  "displayName": "Play Mode Console",
+  "description": "",
+  "unity": "6000.0",
+  "changelogUrl": "",
+  "licensesUrl": "",
+  "keywords": [
+    "editor extension",
+    "efficiency"
+  ],
+  "dependencies": {
+    "jp.hadashikick.vcontainer": "1.11.0"
+  }
+}

@@ -1,0 +1,125 @@
+* {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+}
+
+:root {
+    left: 10px;
+    top: 10px;
+}
+
+.main-window-root {
+    /* 1. Position & Display */
+    display: flex;
+
+    /* 2. Box Model */
+    width: 50%;
+    border-width: 4px;
+    border-radius: 4px;
+    border-color: #222;
+
+    /* 5. Background */
+    background-color: rgba(20 20 20 0.9);
+}
+
+.text-input-box {
+    /* 1. Position & Display */
+    display: flex;
+
+    /* 2. Box Model */
+    height: 20px;
+
+    /* 3. Layout */
+    flex-direction: row;
+
+    /* 5. Background */
+    /*background-color: #08faf4;*/
+    opacity: 1;
+}
+
+.box-decorator__label {
+    /* 1. Position & Display */
+    position: absolute;
+    left: 3px;
+    bottom: 1px;
+
+    /* 2. Box Model */
+    height:100%;
+
+    /* 4. Typography */
+    color: darkgray;
+    -unity-text-align: middle-center;
+}
+
+.input-area__text-field {
+
+    /* 2. Box Model */
+    padding-left: 14px;
+    height: 100%;
+    border-width: 1px;
+    border-color: #080;
+
+    /* 3. Layout */
+    flex-grow: 1;
+
+    /* 5. Background */
+    background-color: #444;
+}
+
+.command-matched {
+    border-color: #0a0;
+}
+
+.command-unmatched {
+    border-color: #E23a39
+}
+
+.input-area__text-field TextInput {
+
+    /* 4. Typography */
+    color: #fff;
+
+    /* 5. Background */
+    background-color: #555;
+    /*opacity: 0.5;*/
+
+    --unity-cursor-color: #fff;
+}
+
+.submit__button {
+
+    /* 2. Box Model */
+    padding: 5px;
+    max-width: 100px;
+    max-height: 40px;
+
+    /* 4. Typography */
+    font-size: 14px;
+    color: antiquewhite;
+
+    /* 5. Layout */
+    background-color: #2F2D26;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.submit__button:hover {
+    background-color: #4F4D46;
+}
+
+.command-list-box {
+    /* 4. Typography */
+    color: white;
+}
+
+.command-list-box * {
+    /* 1. Position & Display */
+    display: none;
+}
+
+.selected-command {
+    /* 5. Background */
+    background-color: #444;
+}
+
