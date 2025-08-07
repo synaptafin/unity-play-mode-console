@@ -9,6 +9,8 @@ Prefab Location: `./Src/Prefab/PlayModeConsole.prefab`
 Reference the prefab instance as `PlayModeCommandRegistry` 
 
 ```cs
+using Synaptafin.PlayModeConsole;
+
 public class CommandRegisterHelper: MonoBehaviour {
     [SerializeField] private PlayModeCommandRegistry _playModeCommandRegistry;
     [SerializeField] private GameSettings _gameSettings;
