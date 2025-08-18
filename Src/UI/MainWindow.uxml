@@ -13,15 +13,17 @@
         </engine:VisualElement>
         <engine:VisualElement name="command-list" class="command-list-box">
             <engine:Label text="empty"/>
-            <engine:Label text="SetGameGravity"/>
-            <engine:Label text="SetScale"/>
-            <engine:Label text="test"/>
-            <engine:Label text="abc"/>
-            <engine:Label text="hello"/>
             <engine:Label text="empty"/>
-            <engine:Label text="CreateBox"/>
-            <engine:Label text="CreateEnemy"/>
-            <engine:Label text="CreateBall" />
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
+            <engine:Label text="empty"/>
             <engine:Label text="empty"/>
         </engine:VisualElement>
     </engine:VisualElement>

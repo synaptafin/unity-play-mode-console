@@ -80,6 +80,7 @@ namespace Synaptafin.PlayModeConsole {
       _inputArea.Focus();
     }
 
+    // Update candidates label based on input text
     private void UpdateCandidatesLabel() {
 
       // when text input changed always set first label as selected

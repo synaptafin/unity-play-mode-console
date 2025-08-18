@@ -9,7 +9,8 @@ namespace Synaptafin.PlayModeConsole {
 
     [Header("Assets for registering commands cross scene")]
     [Tooltip("Use ScriptableObject to register commands cross scene. Create by: Assets/Create/" + COMMAND_REGISTRY_SO_PATH)]
-    [SerializeField] private PlayModeCommandRegistrySO _commandRegistrySO;
+    [SerializeField]
+    private PlayModeCommandRegistrySO _commandRegistrySO;
 
     private Dictionary<string, Command> _commands;
 
