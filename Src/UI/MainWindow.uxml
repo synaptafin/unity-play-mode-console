@@ -1,30 +1,16 @@
-<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/SubAssets/runtime-console/Src/UI/Style.uss?fileID=7433441132597879392&amp;guid=6ff4ad1272164c22910dcb5a19ff7ff5&amp;type=3#Style" />
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements"
+    noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style
+        src="project://database/Assets/SubAssets/runtime-console/Src/UI/Style.uss?fileID=7433441132597879392&amp;guid=6ff4ad1272164c22910dcb5a19ff7ff5&amp;type=3#Style" />
     <engine:VisualElement class="main-window-root">
         <engine:VisualElement class="text-input-box">
-            <engine:TextField 
-                name="input-area" 
-                class="input-area__text-field command-unmatched" 
-                placeholder="Enter command..." 
-                multiline="false"
-            />
+            <engine:TextField name="input-area" class="input-area__text-field command-unmatched"
+                placeholder="Enter command..." multiline="false" />
             <engine:Button name="run-button" text="Run" class="submit__button" />
             <engine:Label text=">" class="box-decorator__label" />
         </engine:VisualElement>
         <engine:VisualElement name="command-list" class="command-list-box">
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
-            <engine:Label text="empty"/>
         </engine:VisualElement>
     </engine:VisualElement>
+    <engine:Label class="command-item-detail" name="detail" text="no detail" />
 </engine:UXML>

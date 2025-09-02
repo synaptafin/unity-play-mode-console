@@ -10,6 +10,6 @@ namespace Synaptafin.PlayModeConsole {
   /// </summary>
   [CreateAssetMenu(fileName = "PlayModeCommandRegistry", menuName = COMMAND_REGISTRY_SO_PATH)]
   public class PlayModeCommandRegistrySO : ScriptableObject {
-    public readonly Dictionary<string, Command> commandDict = new();
+    public readonly List<Command> commands = new();
   }
 }

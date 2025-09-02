@@ -48,7 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 148c3b30fc3ee42dd87a158bfd11774a, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 51946cfa585094782af8b94d867c36b6, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 51946cfa585094782af8b94d867c36b6,
+    type: 3}
   m_SortingOrder: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -65,8 +66,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e53da1af2770843009f950723723d704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  commandRegistrySO: {fileID: 0}
   _uiDocument: {fileID: 7142600044032925909}
+  _commandItemAsset: {fileID: 9197481963319205126, guid: a0ac2e2338bca4a9da75256714fa800b,
+    type: 3}
 --- !u!114 &8652420512233420554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,3 +81,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55601d79f44f4f549963d98f7881fb04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _commandRegistrySO: {fileID: 0}

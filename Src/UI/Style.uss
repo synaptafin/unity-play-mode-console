@@ -5,8 +5,9 @@
 }
 
 :root {
-    left: 10px;
-    top: 10px;
+    left: 0px;
+    top: 0px;
+    opacity: 1;
 }
 
 .main-window-root {
@@ -14,7 +15,7 @@
     display: flex;
 
     /* 2. Box Model */
-    width: 50%;
+    width: 100%;
     border-width: 4px;
     border-radius: 4px;
     border-color: #222;
@@ -71,6 +72,10 @@
     border-color: #0a0;
 }
 
+.command-executable {
+    border-color: #1f34cc;
+}
+
 .command-unmatched {
     border-color: #E23a39
 }
@@ -115,11 +120,53 @@
 
 .command-list-box * {
     /* 1. Position & Display */
-    display: none;
+    display: flex;
+    top: 0;
+    left: 0;
 }
 
 .selected-command {
     /* 5. Background */
     background-color: #444;
+}
+
+.command-item-root {
+    /* 1. Position & Display */
+    display: flex;
+
+    /* 3. Layout */
+    justify-content: space-between;
+    flex-direction: row;
+
+    /* 4. Typography */
+    font-size: 14px;
+    color: #fff;
+}
+
+.command-item-name {
+    display: flex;
+    /* 4. Typography */
+    color: #eeeeee;
+}
+
+.command-item-desc {
+    /* 1. Position & Display */
+    display: flex;
+
+    /* 4. Typography */
+    color: #999999;
+}
+
+.command-item-detail {
+    /* 1. Position & Display */
+    display: none;
+    position: absolute;
+
+    /* 4. Typography */
+    color: #fff;
+
+    /* 5. Background */
+    background-color: #a73131;
+    opacity: 1;
 }
 

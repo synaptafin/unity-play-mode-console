@@ -1,37 +1,62 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Synaptafin.PlayModeConsole.Constants;
+using CommandUIItem = UnityEngine.UIElements.PlayModeConsoleCommandItemElement;
 
 namespace Synaptafin.PlayModeConsole {
 
   [RequireComponent(typeof(UIDocument))]
   public class PlayModeCommandLine : MonoBehaviour {
 
+    private const int CANDIDATE_LIMIT = 15;
+
     [SerializeField] private UIDocument _uiDocument;
+    [SerializeField] private VisualTreeAsset _commandItemAsset;
 
     private VisualElement _root;
     private TextField _inputArea;
-    private Label[] _candidateCommandLabels;
+    private CommandUIItem[] _commandItems = new CommandUIItem[CANDIDATE_LIMIT];
     private Button _runButton;
-
-    private string _idOfCommandToBeExecuted;
-    private int _selectedCommandIndex = -1;
-    private int _candidateCommandCount = 0;
+    private Label _commandDetail;
 
     private PlayModeCommandRegistry _playModeCommandRegistry;
 
+    private string _commandText;
+    private string[] _argsText;
+    private Command _targetCommand;
+    private int _selectedCommandIndex = -1;
+    private int _candidateCommandCount = 0;
+
     private void Start() {
       _root = _uiDocument.rootVisualElement;
+
       _root.style.display = DisplayStyle.None;
       _root.AddManipulator(new DragManipulator(_root));
       _inputArea = _root.Q<TextField>("input-area");
-      _candidateCommandLabels = _root.Q<VisualElement>("command-list").Children().OfType<Label>().ToArray();
-      _runButton = _root.Q<Button>("run-button");
 
+      _commandDetail = _root.Q<Label>("detail");
+      VisualElement commandList = _root.Q<VisualElement>("command-list");
+      for (int i = 0; i < CANDIDATE_LIMIT; i++) {
+        CommandUIItem item = new(_commandItemAsset.Instantiate());
+        item.style.display = DisplayStyle.None;
+        item.OnHover += pos => {
+          _commandDetail.transform.position = pos;
+          _commandDetail.text = item.CommandDetail;
+          _commandDetail.style.display = DisplayStyle.Flex;
+        };
+        commandList.Add(item);
+        _commandItems[i] = item;
+      }
+
+      _runButton = _root.Q<Button>("run-button");
       _playModeCommandRegistry = GetComponent<PlayModeCommandRegistry>();
 
+      _root.RegisterCallback<PointerLeaveEvent>(evt => {
+        _commandDetail.style.display = DisplayStyle.None;
+      });
       _inputArea.RegisterCallback<ChangeEvent<string>>(TextChangeCallback);
       _runButton.RegisterCallback<ClickEvent>(evt => {
         ExecuteCommand();
@@ -65,10 +90,19 @@ namespace Synaptafin.PlayModeConsole {
       }
 
       if (Input.GetKeyDown(KeyCode.Return)) {
-        if (_inputArea.value.ToLower() == _idOfCommandToBeExecuted.ToLower()) {
+
+        if (_commandText != _targetCommand?.Name.ToLower()) {
+          _inputArea.value = _commandItems[_selectedCommandIndex].CommandName;
+          _targetCommand = _commandItems[_selectedCommandIndex].Command;
+          _commandText = _targetCommand.Name.ToLower();
+          await TextFieldAsyncFocus();
+          return;
+        }
+
+        if (_argsText.Length == _targetCommand.ParamCount) {
           ExecuteCommand();
         }
-        _inputArea.value = _candidateCommandLabels[_selectedCommandIndex].text;
+
         await TextFieldAsyncFocus();
       }
     }
@@ -78,47 +112,6 @@ namespace Synaptafin.PlayModeConsole {
     private async Awaitable TextFieldAsyncFocus() {
       await Awaitable.EndOfFrameAsync();
       _inputArea.Focus();
-    }
-
-    // Update candidates label based on input text
-    private void UpdateCandidatesLabel() {
-
-      // when text input changed always set first label as selected
-      _selectedCommandIndex = 0;
-      UpdateSelectedLabel();
-
-      _idOfCommandToBeExecuted = "";
-      AddModifierClassToInputArea(COMMAND_UNMATCHED_STYLE_CLASS);
-      foreach (Label label in _candidateCommandLabels) {
-        label.style.display = DisplayStyle.None;
-      }
-
-      string inputTextIgnoreCase = _inputArea.value.Trim().ToLower();
-      if (string.IsNullOrEmpty(inputTextIgnoreCase)) {
-        return;
-      }
-      _candidateCommandCount = 0;
-      string[] commandIds = _playModeCommandRegistry.CommandIds();
-
-      foreach (string id in commandIds) {
-        string lowerCaseId = id.ToLower();
-        if (!lowerCaseId.Contains(inputTextIgnoreCase)) {
-          continue;
-        }
-
-        if (lowerCaseId == inputTextIgnoreCase) {
-          _idOfCommandToBeExecuted = id;
-          AddModifierClassToInputArea(COMMAND_MATCHED_STYLE_CLASS);
-        }
-
-        _candidateCommandLabels[_candidateCommandCount].text = id;
-        _candidateCommandLabels[_candidateCommandCount].style.display = DisplayStyle.Flex;
-        _candidateCommandCount++;
-      }
-
-      if (_candidateCommandCount == 1 && inputTextIgnoreCase == _candidateCommandLabels[0].text.ToLower()) {
-        _candidateCommandLabels[0].style.display = DisplayStyle.None;
-      }
     }
 
     private void UpdateSelectedLabel() {
@@ -131,25 +124,19 @@ namespace Synaptafin.PlayModeConsole {
       }
 
       for (int i = 0; i < _candidateCommandCount; i++) {
-        _candidateCommandLabels[i].ClearClassList();
+        _commandItems[i].ClearClassList();
         if (i == _selectedCommandIndex) {
-          _candidateCommandLabels[i].AddToClassList(LABEL_SELECTED_STYLE_CLASS);
+          _commandItems[i].AddToClassList(LABEL_SELECTED_STYLE_CLASS);
         }
       }
     }
 
     private void ExecuteCommand() {
-      if (string.IsNullOrEmpty(_idOfCommandToBeExecuted)) {
+      if (string.IsNullOrEmpty(_commandText)) {
         return;
       }
 
-      Command command = _playModeCommandRegistry.GetCommand(_idOfCommandToBeExecuted);
-
-      try {
-        command.Handler();
-      } catch (Exception e) {
-        Debug.LogException(e);
-      }
+      _targetCommand.Execute(_argsText);
     }
 
     private void AddModifierClassToInputArea(string modifier) {
@@ -159,7 +146,44 @@ namespace Synaptafin.PlayModeConsole {
     }
 
     private void TextChangeCallback(ChangeEvent<string> evt) {
-      UpdateCandidatesLabel();
+
+      // when text input changed always set first label as selected
+      _selectedCommandIndex = 0;
+      UpdateSelectedLabel();
+      AddModifierClassToInputArea(COMMAND_UNMATCHED_STYLE_CLASS);
+      foreach (CommandUIItem item in _commandItems) {
+        item.style.display = DisplayStyle.None;
+      }
+
+      string[] ignoreCaseParts = _inputArea.value.ToLower().Split(' ');
+      if (ignoreCaseParts.Length == 0) {
+        _commandText = "";
+        return;
+      }
+
+      _commandText = ignoreCaseParts[0];
+      _argsText = ignoreCaseParts.Length > 1
+        ? ignoreCaseParts[1..].Select(static s => s.Trim()).ToArray()
+        : Array.Empty<string>();
+
+      _candidateCommandCount = 0;
+      string[] commandNames = _playModeCommandRegistry.CommandNames;
+      IEnumerable<Command> matchedCommands = _playModeCommandRegistry.Commands
+        .Where(c => c.Name.ToLower().Contains(_commandText.ToLower()));
+
+      foreach (Command c in matchedCommands) {
+        if (c.Name.ToLower() == _commandText.ToLower()) {
+          AddModifierClassToInputArea(COMMAND_MATCHED_STYLE_CLASS);
+        }
+        _commandItems[_candidateCommandCount].SetData(c);
+        _commandItems[_candidateCommandCount].style.display = DisplayStyle.Flex;
+        _candidateCommandCount++;
+      }
+
+      // when there is only one, hide all items
+      if (_candidateCommandCount == 1 && _commandText == _commandItems[0].CommandName.ToLower()) {
+        _commandItems[0].style.display = DisplayStyle.None;
+      }
     }
   }
 }
