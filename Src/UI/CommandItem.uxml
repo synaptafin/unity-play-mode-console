@@ -4,7 +4,7 @@
     <Style
         src="project://database/Assets/SubAssets/unity-play-mode-console/Src/UI/Style.uss?fileID=7433441132597879392&amp;guid=6ff4ad1272164c22910dcb5a19ff7ff5&amp;type=3#Style" />
     <engine:VisualElement class="command-item-root">
-        <engine:Label class="command-item-name" name="name" text="commandName" />
-        <engine:Label class="command-item-desc" name="description" text="description..." />
+        <engine:Label class="command-item-name__label" name="name" text="commandName" />
+        <engine:Label class="command-item-desc__label" name="description" text="description..." />
     </engine:VisualElement>
 </engine:UXML>

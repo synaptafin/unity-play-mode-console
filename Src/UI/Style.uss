@@ -60,6 +60,18 @@
     -unity-text-align: middle-center;
 }
 
+.type-hint__label {
+    /* 1. Position & Display */
+    display: none;
+    position: absolute;
+    right: 3px;
+    bottom: 1px;
+
+    /* 4. Typography */
+    color: #888888;
+    -unity-text-align: middle-left;
+}
+
 .input-area__text-field {
 
     /* 2. Box Model */

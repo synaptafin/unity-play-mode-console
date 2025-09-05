@@ -22,6 +22,7 @@ namespace Synaptafin.PlayModeConsole {
     private CommandUIItem[] _commandItems = new CommandUIItem[CANDIDATE_LIMIT];
     private Button _runButton;
     private Label _commandDetail;
+    private Label _typeHint;
 
     private PlayModeCommandRegistry _playModeCommandRegistry;
 
@@ -30,6 +31,7 @@ namespace Synaptafin.PlayModeConsole {
     private Command _targetCommand;
     private int _selectedCommandIndex = -1;
     private int _candidateCommandCount = 0;
+    private float _typeHintOffset = 0;
 
     private void Start() {
       _root = _uiDocument.rootVisualElement;
@@ -45,6 +47,8 @@ namespace Synaptafin.PlayModeConsole {
       _inputArea = _root.Q<TextField>("input-area");
 
       _typeHint = _root.Q<Label>("type-hint");
+      _typeHintOffset = _inputArea.resolvedStyle.fontSize * 2;  // take decorative single character into account
+
       _commandDetail = _root.Q<Label>("detail");
       VisualElement commandList = _root.Q<VisualElement>("command-list");
       for (int i = 0; i < CANDIDATE_LIMIT; i++) {
@@ -65,7 +69,7 @@ namespace Synaptafin.PlayModeConsole {
       _root.RegisterCallback<PointerLeaveEvent>(evt => {
         _commandDetail.style.display = DisplayStyle.None;
       });
-      _inputArea.RegisterCallback<ChangeEvent<string>>(TextChangeCallback);
+      _inputArea.RegisterCallback<ChangeEvent<string>>(SearchTextChangeCallback);
       _runButton.RegisterCallback<ClickEvent>(evt => {
         ExecuteCommand();
       });
@@ -109,7 +113,6 @@ namespace Synaptafin.PlayModeConsole {
 
         if (_commandText != _targetCommand?.Name.ToLower()) {
           _inputArea.value = _commandItems[_selectedCommandIndex].CommandName;
-          _targetCommand = _commandItems[_selectedCommandIndex].Command;
           _commandText = _targetCommand.Name.ToLower();
           await TextFieldAsyncFocus();
           return;
@@ -145,6 +148,18 @@ namespace Synaptafin.PlayModeConsole {
           _commandItems[i].AddToClassList(LABEL_SELECTED_STYLE_CLASS);
         }
       }
+
+      _targetCommand = _commandItems[_selectedCommandIndex].Command;
+      _typeHint.style.display = DisplayStyle.Flex;
+
+      if (_targetCommand?.ParamCount > 0) {
+        _typeHint.text = string.Join(' ', _targetCommand.ParamTypes.Select(static t => Utils.GetShortTypeName(t)));
+        float inputLength = _inputArea.MeasureTextSize(_inputArea.value, 0, VisualElement.MeasureMode.Undefined, 0, VisualElement.MeasureMode.Undefined).x;
+        _typeHint.style.left = inputLength + _typeHintOffset;
+        _typeHint.style.display = DisplayStyle.Flex;
+      } else {
+        _typeHint.style.display = DisplayStyle.None;
+      }
     }
 
     private void ExecuteCommand() {
@@ -161,11 +176,10 @@ namespace Synaptafin.PlayModeConsole {
       _inputArea.AddToClassList(modifier);
     }
 
-    private void TextChangeCallback(ChangeEvent<string> evt) {
+    private void SearchTextChangeCallback(ChangeEvent<string> evt) {
 
       // when text input changed always set first label as selected
       _selectedCommandIndex = 0;
-      UpdateSelectedLabel();
       AddModifierClassToInputArea(COMMAND_UNMATCHED_STYLE_CLASS);
       foreach (CommandUIItem item in _commandItems) {
         item.style.display = DisplayStyle.None;
@@ -200,6 +214,8 @@ namespace Synaptafin.PlayModeConsole {
       if (_candidateCommandCount == 1 && _commandText == _commandItems[0].CommandName.ToLower()) {
         _commandItems[0].style.display = DisplayStyle.None;
       }
+
+      UpdateSelectedLabel();
     }
   }
 }
