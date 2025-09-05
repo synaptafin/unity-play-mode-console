@@ -16,12 +16,19 @@
 
     /* 2. Box Model */
     width: 100%;
+    top: -5%;
+    margin-top: 2px;
     border-width: 4px;
+    border-top-width: 8px;
     border-radius: 4px;
     border-color: #222;
 
     /* 5. Background */
     background-color: rgba(20 20 20 0.9);
+
+    /* 6. Effects */
+    transition-property: top;
+    transition-duration: 0.3s;
 }
 
 .text-input-box {
@@ -143,13 +150,13 @@
     color: #fff;
 }
 
-.command-item-name {
+.command-item-name__label {
     display: flex;
     /* 4. Typography */
     color: #eeeeee;
 }
 
-.command-item-desc {
+.command-item-desc__label {
     /* 1. Position & Display */
     display: flex;
 
@@ -157,7 +164,7 @@
     color: #999999;
 }
 
-.command-item-detail {
+.command-item-detail__label {
     /* 1. Position & Display */
     display: none;
     position: absolute;

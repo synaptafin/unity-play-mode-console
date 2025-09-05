@@ -17,6 +17,7 @@ namespace Synaptafin.PlayModeConsole {
     [SerializeField] private VisualTreeAsset _commandItemAsset;
 
     private VisualElement _root;
+    private VisualElement _mainWindow;
     private TextField _inputArea;
     private CommandUIItem[] _commandItems = new CommandUIItem[CANDIDATE_LIMIT];
     private Button _runButton;
@@ -35,8 +36,15 @@ namespace Synaptafin.PlayModeConsole {
 
       _root.style.display = DisplayStyle.None;
       _root.AddManipulator(new DragManipulator(_root));
+      _mainWindow = _root.Q<VisualElement>("main-window");
+      _mainWindow.RegisterCallback<TransitionEndEvent>(evt => {
+        if (_mainWindow.style.top.value.value < 0) {
+          _root.style.display = DisplayStyle.None;
+        }
+      });
       _inputArea = _root.Q<TextField>("input-area");
 
+      _typeHint = _root.Q<Label>("type-hint");
       _commandDetail = _root.Q<Label>("detail");
       VisualElement commandList = _root.Q<VisualElement>("command-list");
       for (int i = 0; i < CANDIDATE_LIMIT; i++) {
@@ -64,16 +72,24 @@ namespace Synaptafin.PlayModeConsole {
     }
 
     private async void Update() {
-      if (Input.GetKeyDown(KeyCode.Slash) && _root.style.display == DisplayStyle.None) {
+      if (Input.GetKeyDown(KeyCode.Slash)) {
         _root.style.display = DisplayStyle.Flex;
         _selectedCommandIndex = 0;
+
         await TextFieldAsyncFocus();
+        _mainWindow.style.top = Length.Percent(40);  // update uss property after async operation to trigger transition effect
       }
 
       if (Input.GetKeyDown(KeyCode.Escape)) {
-        _root.style.display = DisplayStyle.None;
+        // _root.style.display = DisplayStyle.None;
         _inputArea.value = "";
         _selectedCommandIndex = 0;
+        foreach (CommandUIItem item in _commandItems) {
+          item.style.display = DisplayStyle.None;
+        }
+
+        await Awaitable.EndOfFrameAsync();  // update uss property after async operation to trigger transition effect
+        _mainWindow.style.top = Length.Percent(-10);
       }
 
       if (_root.style.display == DisplayStyle.None) {
