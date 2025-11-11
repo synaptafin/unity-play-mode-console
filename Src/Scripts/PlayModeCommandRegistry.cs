@@ -16,9 +16,8 @@ namespace Synaptafin.PlayModeConsole {
     [SerializeField]
     private PlayModeCommandRegistrySO _commandRegistrySO;
 
-    private List<Command> _commands;
-    public List<Command> Commands => _commands;
-    public string[] CommandNames => _commands.Select(static c => c.Name).ToArray();
+    public List<Command> Commands { get; private set; }
+    public string[] CommandNames => Commands.Select(static c => c.Name).ToArray();
 
     public static void RegisterGlobalGommand(Command command) {
       PlayModeCommandRegistry instance = FindFirstObjectByType<PlayModeCommandRegistry>();
@@ -30,7 +29,7 @@ namespace Synaptafin.PlayModeConsole {
     }
 
     public void Awake() {
-      _commands = _commandRegistrySO == null
+      Commands = _commandRegistrySO == null
         ? new List<Command>()
         : _commandRegistrySO.commands;
 
@@ -38,12 +37,12 @@ namespace Synaptafin.PlayModeConsole {
     }
 
     public void RegisterCommand(Command command) {
-      bool existed = _commands.Any(c => c.Id == command.Id);
+      bool existed = Commands.Any(c => c.Id == command.Id);
       if (existed) {  // update
-        int index = _commands.FindIndex(c => c.Id == command.Id);
-        _commands[index] = command;
+        int index = Commands.FindIndex(c => c.Id == command.Id);
+        Commands[index] = command;
       } else {
-        _commands.Add(command);
+        Commands.Add(command);
       }
     }
 
@@ -82,16 +81,24 @@ namespace Synaptafin.PlayModeConsole {
       RegisterCommand((Delegate)handler, name, description);
     }
 
+    // public void RegisterCommand(Func<IEnumerable<object>> handler, string name = default, string description = default) {
+    //   IEnumerator<object> enumerator = handler().GetEnumerator();
+    //   RegisterCommand((Delegate)(() => enumerator.MoveNext()), name, description);
+    // }
+
+    /// <summary>
+    /// register command with any delegate type
+    /// </summary>
     public void RegisterCommand<T>(T handler, string name = default, string description = default) where T : Delegate {
       RegisterCommand((Delegate)handler, name, description);
     }
 
     public Command GetCommandByName(string commandName) {
-      return _commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
+      return Commands.FirstOrDefault(c => c.Name.Equals(commandName, StringComparison.OrdinalIgnoreCase));
     }
 
     public void RemoveCommand(string name) {
-      int num = _commands.RemoveAll(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+      int num = Commands.RemoveAll(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
       if (num > 0) {
         Debug.Log($"Command with id {name} removed.");
       } else {
