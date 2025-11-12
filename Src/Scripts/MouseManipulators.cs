@@ -26,7 +26,12 @@ namespace Synaptafin.PlayModeConsole {
     }
 
     private void PointerDownCallback(PointerDownEvent evt) {
+
+#if UNITY_6000_2_OR_NEWER
+      _targetStartPosition = target.resolvedStyle.translate;
+#else
       _targetStartPosition = target.transform.position;
+#endif
       _pointerStartPosition = evt.position;
 
       target.CapturePointer(evt.pointerId);
@@ -38,7 +43,11 @@ namespace Synaptafin.PlayModeConsole {
       }
 
       Vector3 pointerDelta = evt.position - _pointerStartPosition;
+#if UNITY_6000_2_OR_NEWER
+      target.style.translate = new Vector2(
+#else
       target.transform.position = new Vector2(
+#endif
         Mathf.Clamp(_targetStartPosition.x + pointerDelta.x, 0, target.panel.visualTree.worldBound.width - 50),
         Mathf.Clamp(_targetStartPosition.y + pointerDelta.y, 0, target.panel.visualTree.worldBound.height - 50)
       );

@@ -76,7 +76,11 @@ namespace Synaptafin.PlayModeConsole {
         CommandUIItem item = new(_commandItemAsset.Instantiate());
         item.style.display = DisplayStyle.None;
         item.OnHover += pos => {
+#if UNITY_6000_2_OR_NEWER
+          _commandDetail.style.translate = pos;
+#else
           _commandDetail.transform.position = pos;
+#endif          
           _commandDetail.text = item.CommandDetail;
           _commandDetail.style.display = DisplayStyle.Flex;
         };
