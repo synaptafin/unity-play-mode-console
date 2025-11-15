@@ -237,6 +237,9 @@ namespace Synaptafin.PlayModeConsole {
         _candidateCommandItems[_candidateCommandCount].SetData(c);
         _candidateCommandItems[_candidateCommandCount].style.display = DisplayStyle.Flex;
         _candidateCommandCount++;
+        if (_candidateCommandCount >= CANDIDATE_LIMIT) {
+          break;
+        }
       }
 
       if (_candidateCommandCount == 0) {
